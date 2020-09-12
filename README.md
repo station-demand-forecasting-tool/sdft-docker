@@ -1,3 +1,3 @@
-# Docker Container for the Station Demand Forecasting Tool database
+# Docker implemetation of the Station Demand Forecasting Tool
 
 Coming soon.

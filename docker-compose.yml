@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  
+  db:
+    image: "sdft/sdft-db:latest"
+    container_name: sdft-db
+    restart: always
+    environment:
+       POSTGRES_PASSWORD: "your_password"
+    command: postgres -c max_wal_size=10GB
+    networks:
+      - postgresql
+    
+  ui:
+    image: "sdft/sdft-ui:latest"
+    container_name: sdft-ui
+    restart: "always"
+    environment:
+      PASSWORD: "your_password"
+    depends_on:
+      - db
+    volumes:
+      - c:/sdft:/home/rstudio
+    ports: 
+      - "8787:8787"
+    networks:
+       - postgresql
+    
+networks:
+  postgresql:
+       driver: bridge

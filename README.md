@@ -1,3 +1,3 @@
-# SDFT Docker Container
+# Docker implemetation of the Station Demand Forecasting Tool
 
 Coming soon.

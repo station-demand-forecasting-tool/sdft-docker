@@ -8,7 +8,7 @@ I have had good results using a DigitalOcean CPU-Optimized virtual machine with 
 
 The Docker implementation consists of two containers:
 
-1. An instance of Rstudio Server with all the required packages and dependencies installed, including the **sdft** R package.
+1. An instance of Rstudio Server with all the required packages and dependencies installed, including the [sdft R package](https://github.com/station-demand-forecasting-tool/sdft).
 
 2. An instance of PostgreSQL server with the PostGIS and pgRouting extensions installed, and all the database tables required by the model.
 

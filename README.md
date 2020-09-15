@@ -100,7 +100,7 @@ This provides brief instructions on running a job in testing mode. Please consul
 
 8. When the job is complete, several files are created in a subfolder of the output folder. The subfolder takes the name of the job as specified in the `config.csv` file. The set of files, assuming you used the example input as provided, are as follows:
    
-   * `station_forecast.csv` contains the model forecast
+   * `station_forecast.csv` contains the model forecast (remember, this will not be a correct forecast when testing mode is used)
    * `exogenous.csv` contains a summary of the input exogenous data
    * `helst1_catchment.geojson` contains the postcode centroids for the station's probabilistic catchment, along with the probability of the station being chosen as an attribute to each centroid. A interpolated surface can be generated using QGIS to visualise the catchment.
    * `sdr.log` contains information on the job run. The level of detail will depend on the `loglevel` set in the `config.csv` file. This is set to DEBUG for the example test run.

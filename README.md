@@ -31,7 +31,7 @@ Images for these containers are available via the Docker Hub. There is no need t
 
 3. In terminal or command prompt change to your `sdft-docker` folder.
 
-4. Run: `docker compose up -d`
+4. Run: `docker-compose up -d`
 
 5. The images will be downloaded from Docker Hub and inflated; if they are not already stored locally.
 

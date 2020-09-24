@@ -4,7 +4,7 @@ Quick and easy install of the Station Demand Forecasting Tool on any modern oper
 
 It is assumed that you have Docker installed on a host computer. This could be a virtual machine in a cloud environment, such as Google Cloud, AWS, Microsoft Azure, or Digital Ocean. For testing purposes or a very simple model run (a single station) you could use your own computer, provided it has sufficient resources available. 
 
-I have had good results using a DigitalOcean CPU-Optimized virtual machine with 16 or 32 CPUs and using the Docker image created by DigitalOcean that's available in the Marketplace. DigitalOcean virtual machines are charged by the second (*whether running or not*), and the hourly charge for the CPU-Optimized 32 CPU VM is just under $1.00. For new users, [this link](https://m.do.co/c/86d69abc23ef) will get you a $100 (60-day) credit.
+We have had good results using a DigitalOcean CPU-Optimized virtual machine with 16 or 32 CPUs and using the Docker image created by DigitalOcean that's available in the Marketplace. DigitalOcean virtual machines are charged by the second (*whether running or not*), and the hourly charge for the CPU-Optimized 32 CPU VM is just under $1.00. For new users, [this link](https://m.do.co/c/86d69abc23ef) will get you a $100 (60-day) credit.
 
 The Docker implementation consists of two containers:
 
@@ -16,7 +16,7 @@ Images for these containers are available via the Docker Hub. There is no need t
 
 ## Setup Instructions
 
-1. Copy the [docker-compose.yml](https://raw.githubusercontent.com/station-demand-forecasting-tool/sdft-docker/master/docker-compose.yml) file from the repository to the host computer (place it in a directory called sdft-docker). 
+1. Copy the [docker-compose.yml](https://raw.githubusercontent.com/station-demand-forecasting-tool/sdft-docker/master/docker-compose.yml) file from the repository to the host computer (place it in a directory called `sdft-docker`). 
 
 2. Edit `docker-compose.yml` and replace the two instances of `your_password` with a password of your choice. This will set the postgres user password and the rstudio user password.
 
@@ -27,7 +27,18 @@ Images for these containers are available via the Docker Hub. There is no need t
       - c:/sdft:/home/rstudio
    ```
 
-   You should replace `c:/sdft` with the path to a suitable directory on the host computer. In the example above, it is a windows host and the location is `c:/sdft`. This folder will be used to read the input files for a model job. It will also be used to write the outputs from a model job. The location needs to be readable and writeable.
+   You should replace `c:/sdft` with the path to a suitable directory on the ***host*** computer. In the example above, it is a windows host and the location is `c:/sdft`. This folder will be used to read the input files for a model job. It will also be used to write the outputs from a model job. The location needs to be readable and writeable by the 'rstudio' user in the Rstudio container. On Linux, you could create a new directory at root level and change its ownership to user id 1000 (this is the id of the 'rstudio' user):
+   
+   ```bash
+   mkdir /sdft/
+   chown 1000 /sdft/
+   ```
+   and then amend `docker-compose.yml` as follows:
+   
+   ```yaml
+   volumes:
+      - /sdft:/home/rstudio
+   ```
 
 3. In terminal or command prompt change to your `sdft-docker` folder.
 
@@ -43,7 +54,7 @@ Images for these containers are available via the Docker Hub. There is no need t
    Creating sdft-ui ... done
    ```
 
-7. You can now connect to the Rstudio server at [http://locahost:8787](http://localhost:8787). Logon with the user `rstudio` and the password you entered in `docker-compose.yml` earlier (if you are installing on a cloud-based VM then you will usually want to configure a tunnel in your SSH client to forward port 8787 on your local computer to port 8787 on your VM).
+7. You can now connect to the Rstudio server at [http://locahost:8787](http://localhost:8787). Logon with the user `rstudio` and the password you entered in `docker-compose.yml` earlier. If you are installing on a cloud-based VM then you will usually want to configure a tunnel in your SSH client to forward port 8787 on your local computer to port 8787 on your VM (By default, the DigitalOcean Docker image will allow external access from any Internet host to http://yourdropletipaddress:8787). 
 
 8. On the PostgreSQL container the database will now be created and the required tables and indexes generated. This process may take some time (perhaps 30-60 minutes). Due to the size of the database once fully generated (around 10GB), this is the most practical method of distribution. This process is only carried out the first time the sdft-db container is built. You can stop and start this container and the database will be preserved.
 

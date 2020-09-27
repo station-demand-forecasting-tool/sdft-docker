@@ -1,6 +1,12 @@
 #!/bin/bash
  
-#stations="create"
+# For local image generation only:
+# if the stations variable is set to "create" then the station table will be generated from the stations.csv file
+# and, once the database has been built on the sdft-db container, the
+# prepare_stations.R script must be run from the sdft-ui container to generate the service areas for each station. 
+# The stations table can then be exported to a SQL file and used to generate a new public container image.
+# We cannot use a shapefile for this export/import as there are multiple geometries in the stations table.
+# stations="create"
 stations="load"
 
 set -e
@@ -56,7 +62,7 @@ then
 echo "create new stations table from stations.csv"
 psql --username "postgres" -d dafni -f /home/sql/stations.sql
 else
-echo "Load existing stations shapefile"
+echo "Load existing stations sql file"
 psql --username "postgres" -d dafni -f /home/data/stations/stations_load.sql
 fi
 

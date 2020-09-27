@@ -8,6 +8,10 @@ services:
     environment:
        POSTGRES_PASSWORD: "your_password"
     command: postgres -c max_wal_size=10GB
+    # ports only needed if you want to access the database externally
+    # not needed for sdft-ui access
+    #ports:
+    #  - "5555:5432"
     networks:
       - postgresql
     

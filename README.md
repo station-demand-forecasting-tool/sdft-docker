@@ -118,4 +118,4 @@ This provides brief instructions on running a job in testing mode. Please consul
    
 ## Further information
 
-Please see the [full documentation](https://www.stationdemand.org.uk) (currently a work in progress).
+Please see the [full documentation](https://www.stationdemand.org.uk).

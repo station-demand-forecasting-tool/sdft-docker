@@ -75,7 +75,7 @@ Images for these containers are available via the Docker Hub. There is no need t
 
 ## Running a job
 
-This provides brief instructions on running a job in testing mode. Please consult the documentation for further information.
+This provides brief instructions on running a job in testing mode. Please consult the [documentation](https://www.stationdemand.org.uk) for further information.
 
 1. In your browser connect to the Rstudio server at [http://localhost:8787](http://localhost:8787).
 

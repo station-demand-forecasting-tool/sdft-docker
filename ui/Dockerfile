@@ -1,6 +1,6 @@
 # docker build -t "sdft-ui" .
 # docker run --name sdft-ui -it sdft-ui
-# if container already running
+# if container is already running
 # THEN:
 # docker container exec -it sdft-ui R
 # OR for bash

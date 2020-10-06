@@ -10,29 +10,28 @@
 # to view sql setup after running docker-compose up -d attach to the container using:
 # docker attach  --sig-proxy=false sdft-db
 # --sig-proxy=false allows you to use ctrl-c to detach without stopping the container
-# On windows you can see progres in the Dashboard - the logs for the container.
+# On Windows you can see progress in the Dashboard - the logs for the container.
 # Use ctrl-c to detach 
 
 FROM pgrouting/pgrouting:12-3.0-3.1.0
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-RUN apt-get update && \
-	apt-get install -y --assume-yes apt-utils
-
-RUN apt-get update && \
-	apt-get install -y \
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
+	apt-get update && \
+	apt-get install -y --no-install-recommends \
 	sudo \
 	curl \
 	wget \
-	unzip 
+	unzip \
+	postgis \
+	&& rm -rf /var/lib/apt/lists/*
 	
-# need to get the shp2psql and pgsql2shp tools 
-RUN apt-get install postgis --no-install-recommends
-
-RUN mkdir /home/sql home/pgrwrappers /home/data
 
 # This is a workaround as Docker Hub doesn't support git-lfs for automated builds. Downloaded the files directly.
+# Note: will have to force re-build when running manually using --no-cache
+# As the following RUN appears always unchanged to Docker
+
 RUN LATEST_VERSION=$(curl -s https://api.github.com/repos/station-demand-forecasting-tool/sdft-docker/releases/latest | grep "tag_name" | cut -d'v' -f2 | cut -d'"' -f1) && \ 
  wget --progress=bar:force:noscroll -P /home/data/stations https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/stations/stations_load.sql && \
  wget --progress=bar:force:noscroll -P /home/data/population https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/population/pc_pop_2011.dbf && \

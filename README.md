@@ -2,7 +2,7 @@
 
 Quick and easy install of the Station Demand Forecasting Tool on any modern operating system, using Docker.
 
-It is assumed that you have Docker installed on a host computer. This could be a virtual machine in a cloud environment, such as Google Cloud, AWS, Microsoft Azure, or Digital Ocean. For testing purposes or a very simple model run (a single station) you could use your own computer, provided it has sufficient resources available. 
+It is assumed that you have Docker installed and running on a host computer. This could be a virtual machine in a cloud environment, such as Google Cloud, AWS, Microsoft Azure, or Digital Ocean. For testing purposes or a very simple model run (a single station) you could use your own computer, provided it has sufficient resources available. 
 
 We have had good results using a DigitalOcean CPU-Optimized virtual machine with 16 or 32 CPUs and using the Docker image created by DigitalOcean that's available in the Marketplace. DigitalOcean virtual machines are charged by the second (*whether running or not*), and the hourly charge for the CPU-Optimized 32 CPU VM is just under $1.00. For new users, [this link](https://m.do.co/c/86d69abc23ef) will get you a $100 (60-day) credit.
 
@@ -39,6 +39,12 @@ Images for these containers are available via the Docker Hub. There is no need t
    volumes:
       - /sdft:/home/rstudio
    ```
+
+3. You may want to check for the most recent version of the images on Docker Hub. You can check using these links:  
+   - [https://hub.docker.com/r/sdft/sdft-ui/tags](https://hub.docker.com/r/sdft/sdft-ui/tags)
+   - [https://hub.docker.com/r/sdft/sdft-db/tags](https://hub.docker.com/r/sdft/sdft-db/tags)    
+
+   Then amend the image tags in `docker-compose.yaml` as required.
 
 3. In terminal or command prompt change to your `sdft-docker` folder.
 
@@ -116,6 +122,10 @@ This provides brief instructions on running a job in testing mode. Please consul
    * `helst1_catchment.geojson` contains the postcode centroids for the station's probabilistic catchment, along with the probability of the station being chosen as an attribute to each centroid. A interpolated surface can be generated using QGIS to visualise the catchment.
    * `sdr.log` contains information on the job run. The level of detail will depend on the `loglevel` set in the `config.csv` file. This is set to DEBUG for the example test run.
    
+## Getting help
+
+To report an issue, bug, or to make a feature request, please [create an issue in this repository](https://github.com/station-demand-forecasting-tool/sdft-docker/issues).
+
 ## Further information
 
 Please see the [full documentation](https://www.stationdemand.org.uk).

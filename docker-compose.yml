@@ -2,7 +2,7 @@ version: '3.3'
 services:
   
   db:
-    image: "sdft/sdft-db:release-1.0.0"
+    image: "sdft/sdft-db:version-1.0.0"
     container_name: sdft-db
     restart: always
     environment:
@@ -16,7 +16,7 @@ services:
       - postgresql
     
   ui:
-    image: "sdft/sdft-ui:release-1.0.0"
+    image: "sdft/sdft-ui:version-1.0.0"
     container_name: sdft-ui
     restart: "always"
     environment:

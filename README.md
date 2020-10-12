@@ -1,8 +1,8 @@
 # Docker implementation of the Station Demand Forecasting Tool
 
-Quick and easy install of the Station Demand Forecasting Tool on any modern operating system, using Docker.
+A quick and easy install of the Station Demand Forecasting Tool on any modern operating system, using Docker.
 
-It is assumed that you have Docker installed and running on a host computer. This could be a virtual machine in a cloud environment, such as Google Cloud, AWS, Microsoft Azure, or Digital Ocean. For testing purposes or a very simple model run (a single station) you could use your own computer, provided it has sufficient resources available. 
+It is assumed that you have Docker installed and running on a host computer. This could be a virtual machine in a cloud environment, such as Google Cloud, AWS, Microsoft Azure, or Digital Ocean. For testing purposes or a very simple model run (a single station) you could use your own computer, provided it has sufficient resources available.
 
 We have had good results using a DigitalOcean CPU-Optimized virtual machine with 16 or 32 CPUs and using the Docker image created by DigitalOcean that's available in the Marketplace. DigitalOcean virtual machines are charged by the second (*whether running or not*), and the hourly charge for the CPU-Optimized 32 CPU VM is just under $1.00. For new users, [this link](https://m.do.co/c/86d69abc23ef) will get you a $100 (60-day) credit.
 

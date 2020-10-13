@@ -1,14 +1,3 @@
-# docker build -t "sdft-ui" .
-# docker run --name sdft-ui -it sdft-ui
-# if container is already running
-# THEN:
-# docker container exec -it sdft-ui R
-# OR for bash
-# docker container exec -it sdft-ui /bin/bash
-# docker tag sdft-ui sdft/sdft-ui:latest
-# docker login
-# docker push sdft/sdft-ui:latest
-
 
 FROM rocker/rstudio:4.0.2
 

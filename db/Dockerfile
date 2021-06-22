@@ -12,29 +12,29 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 	unzip \
 	postgis \
 	&& rm -rf /var/lib/apt/lists/*
-	
+
 
 # This is a workaround as Docker Hub doesn't support git-lfs for automated builds. Download the files directly from the latest release.
 # Note: will have to force no-cache if running manually as the following RUN appears always unchanged to Docker.
 
-RUN LATEST_VERSION=$(curl -s https://api.github.com/repos/station-demand-forecasting-tool/sdft-docker/releases/latest | grep "tag_name" | cut -d'v' -f2 | cut -d'"' -f1) && \ 
- wget --progress=bar:force:noscroll -P /home/data/stations https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/stations/stations_load.sql && \
- wget --progress=bar:force:noscroll -P /home/data/population https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/population/pc_pop_2011.dbf && \
- wget --progress=bar:force:noscroll -P /home/data/population https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/population/pc_pop_2011.cpg && \
- wget --progress=bar:force:noscroll -P /home/data/population https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/population/pc_pop_2011.prj && \
- wget --progress=bar:force:noscroll -P /home/data/population https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/population/pc_pop_2011.shp && \
- wget --progress=bar:force:noscroll -P /home/data/population https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/population/pc_pop_2011.shx && \
- wget --progress=bar:force:noscroll -P /home/data/workplace https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/workplace/workplace2011.dbf && \
- wget --progress=bar:force:noscroll -P /home/data/workplace https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/workplace/workplace2011.cpg && \
- wget --progress=bar:force:noscroll -P /home/data/workplace https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/workplace/workplace2011.prj && \
- wget --progress=bar:force:noscroll -P /home/data/workplace https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/workplace/workplace2011.shp && \
- wget --progress=bar:force:noscroll -P /home/data/workplace https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/workplace/workplace2011.shx && \
- wget --progress=bar:force:noscroll -P /home/data/gb https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/gb/gb_outline.dbf && \
- wget --progress=bar:force:noscroll -P /home/data/gb https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/gb/gb_outline.cpg && \
- wget --progress=bar:force:noscroll -P /home/data/gb https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/gb/gb_outline.prj && \
- wget --progress=bar:force:noscroll -P /home/data/gb https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/gb/gb_outline.shp && \
- wget --progress=bar:force:noscroll -P /home/data/gb https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/data/gb/gb_outline.shx && \
- wget --progress=bar:force:noscroll -P /home/ https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/v${LATEST_VERSION}/db/oproad_essh_gb.zip
+RUN LATEST_VERSION=v$(curl -s https://api.github.com/repos/station-demand-forecasting-tool/sdft-docker/releases/latest | grep "tag_name" | cut -d'v' -f2 | cut -d'"' -f1) && \
+ wget --progress=bar:force:noscroll -P /home/data/stations https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/stations/stations_load.sql && \
+ wget --progress=bar:force:noscroll -P /home/data/population https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/population/pc_pop_2011.dbf && \
+ wget --progress=bar:force:noscroll -P /home/data/population https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/population/pc_pop_2011.cpg && \
+ wget --progress=bar:force:noscroll -P /home/data/population https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/population/pc_pop_2011.prj && \
+ wget --progress=bar:force:noscroll -P /home/data/population https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/population/pc_pop_2011.shp && \
+ wget --progress=bar:force:noscroll -P /home/data/population https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/population/pc_pop_2011.shx && \
+ wget --progress=bar:force:noscroll -P /home/data/workplace https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/workplace/workplace2011.dbf && \
+ wget --progress=bar:force:noscroll -P /home/data/workplace https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/workplace/workplace2011.cpg && \
+ wget --progress=bar:force:noscroll -P /home/data/workplace https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/workplace/workplace2011.prj && \
+ wget --progress=bar:force:noscroll -P /home/data/workplace https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/workplace/workplace2011.shp && \
+ wget --progress=bar:force:noscroll -P /home/data/workplace https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/workplace/workplace2011.shx && \
+ wget --progress=bar:force:noscroll -P /home/data/gb https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/gb/gb_outline.dbf && \
+ wget --progress=bar:force:noscroll -P /home/data/gb https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/gb/gb_outline.cpg && \
+ wget --progress=bar:force:noscroll -P /home/data/gb https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/gb/gb_outline.prj && \
+ wget --progress=bar:force:noscroll -P /home/data/gb https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/gb/gb_outline.shp && \
+ wget --progress=bar:force:noscroll -P /home/data/gb https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/data/gb/gb_outline.shx && \
+ wget --progress=bar:force:noscroll -P /home/ https://media.githubusercontent.com/media/station-demand-forecasting-tool/sdft-docker/${LATEST_VERSION}/db/oproad_essh_gb.zip
 
 COPY /sql /home/sql
 COPY /data/stations/stations.csv /home/data/stations/

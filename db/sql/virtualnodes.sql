@@ -7,18 +7,18 @@ CREATE SEQUENCE vnodes_pid_seq START WITH 10000000;
 
 
 create table openroads.vnodesneg_roadlinks as
--- select long edges (1.5km)
+-- select long edges (1 km)
 with line as
     (select
         id as edge_id, the_geom as geom
     from openroads.roadlinks
-			where cost_len > 1500
+			where cost_len > 1000
 			),
--- create measure every 1km
+-- create measure every 500m
 linemeasure as
     (select
         edge_id, st_addmeasure(line.geom, 0, st_length(line.geom)) as linem,
-        generate_series(0, st_length(line.geom)::int, 1000) as i
+        generate_series(0, st_length(line.geom)::int, 500) as i
     from line),
 geometries as (
     select

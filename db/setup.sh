@@ -1,9 +1,9 @@
 #!/bin/bash
- 
+
 # For local image generation only:
 # if the stations variable is set to "create" then the station table will be generated from the stations.csv file
 # and, once the database has been built on the sdft-db container, the
-# prepare_stations.R script must be run from the sdft-ui container to generate the service areas for each station. 
+# prepare_stations.R script must be run from the sdft-ui container to generate the service areas for each station.
 # The stations table can then be exported to a SQL file and used to generate a new public container image.
 # We cannot use a shapefile for this export/import as there are multiple geometries in the stations table.
 # stations="create"
@@ -13,7 +13,7 @@ set -e
 
 psql --username "postgres" -f /home/sql/setup.sql
 
-#prepare the tables don't load data
+#prepare the tables don't load data -p  Prepare mode, only creates the table.
 #force non-multi and set the geometry column name to the_geom, dbf is in latin1 encoding
 
 

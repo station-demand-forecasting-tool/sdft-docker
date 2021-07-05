@@ -19,6 +19,7 @@ created every 1km on edges < 1.5km.
 
 * /db docker file - change to version argument for LFS downloads
 * Additional comments added to docker-compose
+* Now using rocker/rstudio:4.1.0 for ui container
 
 
 # sdft-docker 1.0

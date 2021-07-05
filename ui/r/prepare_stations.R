@@ -24,7 +24,7 @@ library(DBI)
 library(futile.logger)
 library(checkmate)
 
-key_set_with_value(service = args[1], password = args[2] )
+#key_set_with_value(service = args[1], password = args[2] )
 
 # set up logging
 
@@ -71,7 +71,7 @@ checkdb <- try(con <-
                  dbConnect(
                    RPostgres::Postgres(),
                    dbname = "dafni",
-                   host = "localhost",
+                   host = "sdft-db",
                    user = "postgres",
                    password = key_get("postgres")
                  ))
@@ -82,15 +82,16 @@ if (class(checkdb) == "try-error") {
 # Set up parallel processing
 # This is currently used in the sdr_create_service_areas() and
 # sdr_generate_choicesets() functions, in a foreach loop.
+passwd <- key_get("postgres")
 
 # Number of clusters is total available cores less two.
 cl <- makeCluster(detectCores() - 1)
 registerDoParallel(cl)
 clusterExport(
-      cl = cl,
-      varlist = c("out_path", "threshold"),
-      envir = environment()
-    )
+  cl = cl,
+  varlist = c("passwd", "out_path", "threshold"),
+  envir = environment()
+)
 
 checkcl <- try(clusterEvalQ(cl, {
   library(DBI)
@@ -101,10 +102,10 @@ checkcl <- try(clusterEvalQ(cl, {
   con <-
     dbConnect(
       RPostgres::Postgres(),
-      host = "localhost",
+      host = "sdft-db",
       user = "postgres",
-      password = key_get("postgres"),
-      dbname = "dafni"
+      dbname = "dafni",
+      password = passwd
     )
   NULL
 }))

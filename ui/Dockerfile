@@ -1,5 +1,5 @@
 
-FROM rocker/rstudio:4.0.2
+FROM rocker/rstudio:4.1.0
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
     apt-get update && \
@@ -21,7 +21,7 @@ COPY /r /home/r
 # if this is updated then issue a new release of sdft-docker
 # this will then trigger automated build on Docker Hub
 
-ARG sdft=0.3.1
+ARG sdft=0.3.2
 
 # download the specified release of sdft and then run R setup
 RUN SDFT_VERSION=v$sdft && \

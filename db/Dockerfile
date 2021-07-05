@@ -1,3 +1,4 @@
+# docker build -t sdft-db --no-cache .
 
 FROM pgrouting/pgrouting:12-3.0-3.1.0
 

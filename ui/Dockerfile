@@ -12,7 +12,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 	libpq-dev \
 	libsecret-1-dev \
 	&& rm -rf /var/lib/apt/lists/*
-	
+
 # RUN mkdir /home/r
 
 COPY /r /home/r
@@ -24,8 +24,8 @@ COPY /r /home/r
 ARG sdft=0.3.1
 
 # download the specified release of sdft and then run R setup
-RUN SDFT_VERSION=$sdft && \
-	curl -L -o /tmp/sdft.zip https://github.com/station-demand-forecasting-tool/sdft/archive/v${SDFT_VERSION}.zip && \
+RUN SDFT_VERSION=v$sdft && \
+	curl -L -o /tmp/sdft.zip https://github.com/station-demand-forecasting-tool/sdft/archive/${SDFT_VERSION}.zip && \
 	unzip /tmp/sdft.zip -d /tmp && \
 	mv /tmp/sdft-* /tmp/sdft && \
 	Rscript /home/r/setup.R

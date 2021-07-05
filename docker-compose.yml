@@ -1,6 +1,9 @@
 version: '3.3'
 services:
-  
+  # equivalent to these interactive commands:
+  # docker network create -d bridge postgresql
+  # docker run -d --restart=always --network=postgresql --name sdft-db -p 5432:5432 -e POSTGRES_PASSWORD=password sdft-db -c max_wal_size=10GB
+  # docker run -d --restart=always --network=postgresql --name sdft-ui -p 8787:8787  -v /home/sdft:/home/rstudio  -e PASSWORD=password sdft-ui
   db:
     image: "sdft/sdft-db:version-1.0.0"
     container_name: sdft-db
@@ -14,7 +17,7 @@ services:
     #  - "5555:5432"
     networks:
       - postgresql
-    
+
   ui:
     image: "sdft/sdft-ui:version-1.0.0"
     container_name: sdft-ui
@@ -25,11 +28,11 @@ services:
       - db
     volumes:
       - c:/sdft:/home/rstudio
-    ports: 
+    ports:
       - "8787:8787"
     networks:
        - postgresql
-    
+
 networks:
   postgresql:
        driver: bridge

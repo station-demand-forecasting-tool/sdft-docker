@@ -104,7 +104,7 @@ This provides brief instructions on running a job in testing mode. Please consul
    key_set("postgres")
    ```
    
-   When prompted, enter the password that you set earlier in the `docker-compose.yml` file.
+   You will first be asked to provide a password for the 'system' keyring. This is a new password and you can provide whatever you like here. You will then be prompted for the password to set for the "postgres" service. You should enter the password that you set earlier in the `docker-compose.yml` file.
    
 6. You are now ready to submit the test job:
 

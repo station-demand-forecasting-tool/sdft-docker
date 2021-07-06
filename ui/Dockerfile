@@ -1,3 +1,4 @@
+# docker build -t sdft-ui --no-cache .
 
 FROM rocker/rstudio:4.1.0
 

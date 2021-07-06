@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This for local image generation only:
+# For local image generation only:
 # if the stations variable is set to "create" then the station table will be generated from the stations.csv file
 # and, once the database has been built on the sdft-db container, the
 # prepare_stations.R script must be run from the sdft-ui container to generate the service areas for each station.

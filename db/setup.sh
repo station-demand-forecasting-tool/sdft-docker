@@ -51,8 +51,8 @@ shp2pgsql -s 27700 -g geom -S -D $f "data"."pc_pop_2011" | psql -U postgres -d d
 
 psql --username "postgres" -d dafni -c 'alter table data.pc_pop_2011 drop column id;'
 psql --username "postgres" -d dafni -c 'alter table data.pc_pop_2011 rename column gid to id;'
-psql --username "postgres" -d dafni -c 'create index idx_pc_pop_2011_geom on data.pc_pop_2011 using gist ( geom );'
-psql --username "postgres" -d dafni -c 'create index idx_pc_pop_2011_postcode on data.pc_pop_2011 using btree ( postcode );'
+psql --username "postgres" -d dafni -c 'create index IF NOT EXISTS idx_pc_pop_2011_geom on data.pc_pop_2011 using gist ( geom );'
+psql --username "postgres" -d dafni -c 'create index IF NOT EXISTS idx_pc_pop_2011_postcode on data.pc_pop_2011 using btree ( postcode );'
 
 # decision whether to load stations shapefile with service areas
 # or whether to recreate stations table
@@ -66,21 +66,21 @@ echo "Load existing stations sql file"
 psql --username "postgres" -d dafni -f /home/data/stations/stations_load.sql
 fi
 
-psql --username "postgres" -d dafni -c 'create index idx_stations_location_geom on data.stations using gist ( location_geom );'
+psql --username "postgres" -d dafni -c 'create index IF NOT EXISTS idx_stations_location_geom on data.stations using gist ( location_geom );'
 
 
 f=/home/data/workplace/workplace2011.shp
 shp2pgsql -s 27700 -g geom -S -D $f "data"."workplace2011" | psql -U postgres -d dafni
 
-psql --username "postgres" -d dafni -c 'create index idx_workplace2011_geom on data.workplace2011 using gist ( geom );'
-psql --username "postgres" -d dafni -c 'create index idx_workplace2011_wz on data.workplace2011 using btree ( wz );'
+psql --username "postgres" -d dafni -c 'create index IF NOT EXISTS idx_workplace2011_geom on data.workplace2011 using gist ( geom );'
+psql --username "postgres" -d dafni -c 'create index IF NOT EXISTS idx_workplace2011_wz on data.workplace2011 using btree ( wz );'
 
 psql --username "postgres" -d dafni -f /home/sql/hhsize.sql
 
 f=/home/data/gb/gb_outline.shp
 shp2pgsql -s 27700 -g geom -D $f "data"."gb_outline" | psql -U postgres -d dafni
 
-psql --username "postgres" -d dafni -c 'create index idx_gb_outline_geom on data.gb_outline using gist ( geom );'
+psql --username "postgres" -d dafni -c 'create index IF NOT EXISTS idx_gb_outline_geom on data.gb_outline using gist ( geom );'
 
 
 psql --username "postgres" -d dafni -f /home/sql/uplifts.sql

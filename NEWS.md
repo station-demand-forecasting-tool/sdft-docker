@@ -1,3 +1,15 @@
+# sdft-docker 1.1.0.9000
+
+## Fixes
+
+* Issues with setup.sh:
+  - Windows CR LF ^M error. Re-saved file in Unix format
+  - incorrect create table command
+  - create idx_stations_location_geom which already exists (when stations table 
+  created)
+  - added IF NOT EXISTS to all index creation statements.
+
+
 # sdft-docker 1.1.0
 
 ## Enhancements

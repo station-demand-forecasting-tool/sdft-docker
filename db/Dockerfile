@@ -2,9 +2,10 @@
 
 FROM pgrouting/pgrouting:17-3.5-4.0.1
 
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-
+# Base image may ship a stale PGDG apt source (bullseye-pgdg) that breaks apt-get update.
+# Keep postgis apt package for shp2pgsql (used by setup.sh); extension itself comes from the base.
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
+	rm -f /etc/apt/sources.list.d/pgdg*.list && \
 	apt-get update && \
 	apt-get install -y --no-install-recommends \
 	sudo \

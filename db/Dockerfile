@@ -1,6 +1,6 @@
 # docker build -t sdft-db --no-cache .
 
-FROM pgrouting/pgrouting:12-3.0-3.1.0
+FROM pgrouting/pgrouting:17-3.5-4.0.1
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
@@ -15,7 +15,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 	&& rm -rf /var/lib/apt/lists/*
 
 
-# This is a workaround as Docker Hub doesn't support git-lfs for automated builds. Download the files directly from the latest release.
+# Download LFS-backed seed assets from the latest GitHub release (avoids needing git-lfs in the image build).
 # Note: will have to force no-cache if running manually as the following RUN appears always unchanged to Docker.
 
 RUN LATEST_VERSION=v$(curl -s https://api.github.com/repos/station-demand-forecasting-tool/sdft-docker/releases/latest | grep "tag_name" | cut -d'v' -f2 | cut -d'"' -f1) && \

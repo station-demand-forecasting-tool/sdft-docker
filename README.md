@@ -12,72 +12,56 @@ The Docker implementation consists of two containers:
 
 2. An instance of PostgreSQL server with the PostGIS and pgRouting extensions installed, and all the database tables required by the model.
 
-Images for these containers are available via the Docker Hub. There is no need to clone this repository or generate the images yourself.
+Images for these containers are published on the **GitHub Container Registry (GHCR)** under this repository. There is no need to clone this repository or generate the images yourself. Packages are public, so anonymous pull works without a GitHub login.
 
 ## Setup Instructions
 
-1. Copy the [docker-compose.yml](https://raw.githubusercontent.com/station-demand-forecasting-tool/sdft-docker/master/docker-compose.yml) file from the repository to the host computer (place it in a directory called `sdft-docker`). 
+1. Copy the [docker-compose.yml](https://raw.githubusercontent.com/station-demand-forecasting-tool/sdft-docker/master/docker-compose.yml) and [.env.example](https://raw.githubusercontent.com/station-demand-forecasting-tool/sdft-docker/master/.env.example) files from the repository to the host computer (place them in a directory called `sdft-docker`).
 
-2. Edit `docker-compose.yml` and replace the two instances of `your_password` with a password of your choice. This will set the postgres user password and the rstudio user password.
+2. Copy `.env.example` to `.env` and set:
 
-3. Edit `docker-compose.yml` and amend the entry:  
+   - `POSTGRES_PASSWORD` — PostgreSQL superuser password
+   - `PASSWORD` — RStudio Server password for user `rstudio`
+   - `SDFT_HOST_DIR` — path on the ***host*** that will be bind-mounted to `/home/rstudio` in the UI container
 
-   ```yaml
-   volumes:
-      - c:/sdft:/home/rstudio
-   ```
+   This folder is used to read model job inputs and write outputs. It must be readable and writeable by the `rstudio` user in the RStudio container (UID 1000). On Linux:
 
-   You should replace `c:/sdft` with the path to a suitable directory on the ***host*** computer. In the example above, it is a windows host and the location is `c:/sdft`. This folder will be used to read the input files for a model job. It will also be used to write the outputs from a model job. The location needs to be readable and writeable by the 'rstudio' user in the Rstudio container. On Linux, you could create a new directory at root level and change its ownership to user id 1000 (this is the id of the 'rstudio' user):
-   
    ```bash
    mkdir /sdft/
    chown 1000 /sdft/
    ```
-   and then amend `docker-compose.yml` as follows:
-   
-   ```yaml
-   volumes:
-      - /sdft:/home/rstudio
-   ```
 
-3. You may want to check for the most recent version of the images on Docker Hub. You can check using these links:  
-   - [https://hub.docker.com/r/sdft/sdft-ui/tags](https://hub.docker.com/r/sdft/sdft-ui/tags)
-   - [https://hub.docker.com/r/sdft/sdft-db/tags](https://hub.docker.com/r/sdft/sdft-db/tags)    
+   Then set `SDFT_HOST_DIR=/sdft` in `.env`. On Windows, an example value is `c:/sdft`.
 
-   Then amend the image tags in `docker-compose.yaml` as required.
-
-3. In terminal or command prompt change to your `sdft-docker` folder.
-
-4. Run: `docker-compose up -d`
-
-5. The images will be downloaded from Docker Hub and inflated; if they are not already stored locally.
-
-6. On successful completion you should see the following:  
+   **Maintainers:** prefer Doppler instead of a committed `.env`. Bind the project secrets, then run Compose via:
 
    ```bash
-   Creating network "sdft-docker_postgresql" with driver "bridge"
-   Creating sdft-db ... done
-   Creating sdft-ui ... done
+   doppler run -- docker compose up -d
    ```
 
-7. You can now connect to the Rstudio server at [http://locahost:8787](http://localhost:8787). Logon with the user `rstudio` and the password you entered in `docker-compose.yml` earlier. If you are installing on a cloud-based VM then you will usually want to configure a tunnel in your SSH client to forward port 8787 on your local computer to port 8787 on your VM (By default, the DigitalOcean Docker image will allow external access from any Internet host to http://yourdropletipaddress:8787). 
+3. Confirm the Compose file points at the GHCR tags you want (default `v2.0.0`):
 
-8. On the PostgreSQL container the database will now be created and the required tables and indexes generated. This process may take some time (perhaps 30-60 minutes). Due to the size of the database once fully generated (around 10GB), this is the most practical method of distribution. This process is only carried out the first time the sdft-db container is built. You can stop and start this container and the database will be preserved.
+   - `ghcr.io/station-demand-forecasting-tool/sdft-docker/sdft-db:v2.0.0`
+   - `ghcr.io/station-demand-forecasting-tool/sdft-docker/sdft-ui:v2.0.0`
 
-9. To check on progress, you can attach to the container by running: `docker attach  --sig-proxy=false sdft-db` from the command prompt or terminal. The `--sig-proxy=false` option allows you to use `ctrl-c` to detach from the container without stopping it. Once the database initialisation is complete, you will see the following (assuming you're still attached to the container):
+   Package pages:
 
-   ```bash
-   PostgreSQL init process complete; ready for start up.
+   - [sdft-db packages](https://github.com/station-demand-forecasting-tool/sdft-docker/pkgs/container/sdft-docker%2Fsdft-db)
+   - [sdft-ui packages](https://github.com/station-demand-forecasting-tool/sdft-docker/pkgs/container/sdft-docker%2Fsdft-ui)
 
-    2020-09-14 13:44:12.985 UTC [1] LOG:  starting PostgreSQL 12.4 (Debian 12.4-1.pgdg100+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 8.3.0-6) 8.3.0, 64-bit
-    2020-09-14 13:44:12.985 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
-    2020-09-14 13:44:12.985 UTC [1] LOG:  listening on IPv6 address "::", port 5432
-    2020-09-14 13:44:12.991 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
-    2020-09-14 13:44:13.012 UTC [1457] LOG:  database system was shut down at 2020-09-14 13:44:12 UTC
-    2020-09-14 13:44:13.018 UTC [1] LOG:  database system is ready to accept connections
-    
-   ```
+4. In a terminal, change to your `sdft-docker` folder.
 
+5. Run: `docker compose up -d`
+
+6. The images will be pulled from GHCR and started if they are not already stored locally.
+
+7. On successful completion you should see the network and both containers created (`sdft-db`, `sdft-ui`).
+
+8. Connect to the RStudio server at [http://localhost:8787](http://localhost:8787). Log on with user `rstudio` and the password from your `.env` (or Doppler). If you are installing on a cloud VM, tunnel port 8787 or open it in the firewall as appropriate (by default, the DigitalOcean Docker Marketplace image may allow external access to `http://yourdropletipaddress:8787`).
+
+9. On first start with an empty named volume, the PostgreSQL container creates the database and loads required tables and indexes. This can take 30–60 minutes and yields a database of around 10GB. Later stop/start cycles reuse the `pgdata` named volume. To reset the database, remove the Compose project’s `pgdata` volume after stopping the stack.
+
+10. To watch init progress: `docker attach --sig-proxy=false sdft-db`. `Ctrl-C` detaches without stopping the container. When init finishes you will see PostgreSQL ready for connections (version string will match the current image base).
 
 ## Running a job
 
@@ -86,7 +70,7 @@ This provides brief instructions on running a job in testing mode. Please consul
 1. In your browser connect to the Rstudio server at [http://localhost:8787](http://localhost:8787).
 
 2. Copy the example job submission CSV files from the SDFT R package to `/home/rstudio/input` by running:
-   
+
    ```r
    dir.create("/home/rstudio/input")
    files <- list.files(file.path(system.file(package = "sdft"), "example_input"), full.names = TRUE)
@@ -97,31 +81,31 @@ This provides brief instructions on running a job in testing mode. Please consul
 
 4. Edit `config.csv` and set the number of processor cores to be used for the job. As a minimum, 4 are required. Save the file.
 
-5. Provide your password for the postgres user, using `key_set()` from the keyring package: 
-   
+5. Provide your password for the postgres user, using `key_set()` from the keyring package:
+
    ```r
    library(keyring)
    key_set("postgres")
    ```
-   
-   You will first be asked to provide a password for the 'system' keyring. This is a new password and you can provide whatever you like here. You will then be prompted for the password to set for the "postgres" service. You should enter the password that you set earlier in the `docker-compose.yml` file.
-   
+
+   You will first be asked to provide a password for the 'system' keyring. This is a new password and you can provide whatever you like here. You will then be prompted for the password to set for the "postgres" service. You should enter the same value as `POSTGRES_PASSWORD`.
+
 6. You are now ready to submit the test job:
 
    ```r
    library(sdft)
    sdft_submit(dbhost = "sdft-db", dirpath = "/home/rstudio")
    ```
-   
+
 7. A log file, `sdr.log`, will be generated in the `/home/rstudio/output` folder and will be updated while the job runs.
 
 8. When the job is complete, several files are created in a subfolder of the output folder. The subfolder takes the name of the job as specified in the `config.csv` file. The set of files, assuming you used the example input as provided, are as follows:
-   
+
    * `station_forecast.csv` contains the model forecast (remember, this will not be a correct forecast when testing mode is used)
    * `exogenous.csv` contains a summary of the input exogenous data
    * `helst1_catchment.geojson` contains the postcode centroids for the station's probabilistic catchment, along with the probability of the station being chosen as an attribute to each centroid. A interpolated surface can be generated using QGIS to visualise the catchment.
    * `sdr.log` contains information on the job run. The level of detail will depend on the `loglevel` set in the `config.csv` file. This is set to DEBUG for the example test run.
-   
+
 ## Getting help
 
 To report an issue, bug, or to make a feature request, please [create an issue in this repository](https://github.com/station-demand-forecasting-tool/sdft-docker/issues).

@@ -1,38 +1,42 @@
-version: '3.3'
 services:
   # equivalent to these interactive commands:
   # docker network create -d bridge postgresql
-  # docker run -d --restart=always --network=postgresql --name sdft-db -p 5555:5432 -e POSTGRES_PASSWORD=password sdft-db -c max_wal_size=10GB
-  # docker run -d --restart=always --network=postgresql --name sdft-ui -p 8787:8787  -v /home/sdft:/home/rstudio  -e PASSWORD=password sdft-ui
+  # docker run -d --restart=always --network=postgresql --name sdft-db -e POSTGRES_PASSWORD=password -v pgdata:/pgdata sdft-db -c max_wal_size=10GB
+  # docker run -d --restart=always --network=postgresql --name sdft-ui -p 8787:8787 -v /sdft:/home/rstudio -e PASSWORD=password sdft-ui
   db:
-    image: "sdft/sdft-db:version-1.1.1"
+    image: "ghcr.io/station-demand-forecasting-tool/sdft-docker/sdft-db:v2.0.0"
     container_name: sdft-db
     restart: always
     environment:
-       POSTGRES_PASSWORD: "your_password"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
     command: postgres -c max_wal_size=10GB
     # ports only needed if you want to access the database externally
     # not needed for sdft-ui access
     #ports:
     #  - "5555:5432"
+    volumes:
+      - pgdata:/pgdata
     networks:
       - postgresql
 
   ui:
-    image: "sdft/sdft-ui:version-1.1.1"
+    image: "ghcr.io/station-demand-forecasting-tool/sdft-docker/sdft-ui:v2.0.0"
     container_name: sdft-ui
     restart: "always"
     environment:
-      PASSWORD: "your_password"
+      PASSWORD: "${PASSWORD}"
     depends_on:
       - db
     volumes:
-      - c:/sdft:/home/rstudio
+      - ${SDFT_HOST_DIR}:/home/rstudio
     ports:
       - "8787:8787"
     networks:
-       - postgresql
+      - postgresql
 
 networks:
   postgresql:
-       driver: bridge
+    driver: bridge
+
+volumes:
+  pgdata:

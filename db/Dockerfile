@@ -2,10 +2,19 @@
 
 FROM pgrouting/pgrouting:17-3.5-4.0.1
 
-# Base image may ship a stale PGDG apt source (bullseye-pgdg) that breaks apt-get update.
-# Keep postgis apt package for shp2pgsql (used by setup.sh); extension itself comes from the base.
+# Base is Debian 11 (bullseye), past LTS (2026-08-31): live mirrors keep bullseye-security
+# indexes but .deb pool files 404; use archive.debian.org for security. Also drop stale PGDG.
+# Keep postgis apt package for shp2pgsql (setup.sh); the PostGIS extension comes from the base.
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
+	echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until && \
 	rm -f /etc/apt/sources.list.d/pgdg*.list && \
+	for f in /etc/apt/sources.list /etc/apt/sources.list.d/*; do \
+		[ -f "$f" ] || continue; \
+		sed -i \
+			-e 's|https\?://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' \
+			-e 's|https\?://deb.debian.org/debian-security|http://archive.debian.org/debian-security|g' \
+			"$f"; \
+	done && \
 	apt-get update && \
 	apt-get install -y --no-install-recommends \
 	sudo \

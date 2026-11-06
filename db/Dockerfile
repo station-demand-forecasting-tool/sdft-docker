@@ -1,10 +1,20 @@
 # docker build -t sdft-db --no-cache .
 
-FROM pgrouting/pgrouting:12-3.0-3.1.0
+FROM pgrouting/pgrouting:17-3.5-4.0.1
 
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-
+# Base is Debian 11 (bullseye), past LTS (2026-08-31): live mirrors keep bullseye-security
+# indexes but .deb pool files 404; use archive.debian.org for security. Also drop stale PGDG.
+# Keep postgis apt package for shp2pgsql (setup.sh); the PostGIS extension comes from the base.
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
+	echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until && \
+	rm -f /etc/apt/sources.list.d/pgdg*.list && \
+	for f in /etc/apt/sources.list /etc/apt/sources.list.d/*; do \
+		[ -f "$f" ] || continue; \
+		sed -i \
+			-e 's|https\?://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' \
+			-e 's|https\?://deb.debian.org/debian-security|http://archive.debian.org/debian-security|g' \
+			"$f"; \
+	done && \
 	apt-get update && \
 	apt-get install -y --no-install-recommends \
 	sudo \
@@ -15,7 +25,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 	&& rm -rf /var/lib/apt/lists/*
 
 
-# This is a workaround as Docker Hub doesn't support git-lfs for automated builds. Download the files directly from the latest release.
+# Download LFS-backed seed assets from the latest GitHub release (avoids needing git-lfs in the image build).
 # Note: will have to force no-cache if running manually as the following RUN appears always unchanged to Docker.
 
 RUN LATEST_VERSION=v$(curl -s https://api.github.com/repos/station-demand-forecasting-tool/sdft-docker/releases/latest | grep "tag_name" | cut -d'v' -f2 | cut -d'"' -f1) && \

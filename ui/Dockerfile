@@ -1,6 +1,6 @@
 # docker build -t sdft-ui --no-cache .
 
-FROM rocker/rstudio:4.1.0
+FROM rocker/rstudio:4.6.2
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections && \
     apt-get update && \
@@ -20,7 +20,7 @@ COPY /r /home/r
 
 # set required sdft R package release
 # if this is updated then issue a new release of sdft-docker
-# this will then trigger automated build on Docker Hub
+# tag push / workflow_dispatch publishes images to GHCR
 
 ARG sdft=0.3.2
 

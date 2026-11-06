@@ -5,7 +5,8 @@
 # What it does:
 #   1. Creates /opt/sdft-docker and downloads docker-compose.yml (GIT_REF)
 #   2. Keeps an existing .env, or generates missing values when needed
-#   3. Resolves SDFT_HOST_DIR via Compose (environment overrides .env)
+#   3. Reads the /home/rstudio bind source from the rendered Compose config
+#      (environment overrides .env; ~ and relative paths are normalized)
 #   4. Creates/chowns that directory to UID/GID 1000 so the UI can write
 #   5. Runs docker compose up -d
 #
@@ -18,7 +19,7 @@
 # When init finishes you will see PostgreSQL ready for connections.
 #
 # If RStudio warns it can't write /home/rstudio/.local/share/rstudio, fix with:
-#   chown -R 1000:1000 "${SDFT_HOST_DIR:-/sdft}"
+#   chown -R 1000:1000 "$(realpath "${SDFT_HOST_DIR:-/sdft}")"
 #
 # Env overrides (optional):
 #   GIT_REF=task/TASK-1          # branch, tag, or commit for raw GitHub compose
@@ -48,6 +49,11 @@ if ! docker compose version >/dev/null 2>&1; then
   exit 1
 fi
 
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "python3 not found (needed to read the rendered Compose config)." >&2
+  exit 1
+fi
+
 mkdir -p "${INSTALL_DIR}"
 
 echo "Fetching docker-compose.yml (${GIT_REF})..."
@@ -73,17 +79,23 @@ else
   chmod 600 "${INSTALL_DIR}/.env"
 fi
 
-# Let Compose parse .env without executing it as shell code or printing secrets.
+# Prepare the exact path Compose will mount: the raw variable can differ
+# (~ is expanded and relative paths are resolved only in the rendered config).
 cd "${INSTALL_DIR}"
-SDFT_HOST_DIR="$(docker compose config --environment |
-  awk '/^SDFT_HOST_DIR=/ { sub(/^SDFT_HOST_DIR=/, ""); print }')"
+SDFT_HOST_DIR="$(docker compose config --format json | python3 -c '
+import json, sys
+volumes = json.load(sys.stdin)["services"]["ui"].get("volumes", [])
+print(next((v["source"] for v in volumes if v.get("target") == "/home/rstudio"), ""))
+')"
 if [[ -z "${SDFT_HOST_DIR}" ]]; then
-  echo "SDFT_HOST_DIR must resolve to a non-empty directory." >&2
+  echo "Could not determine the /home/rstudio bind source from docker compose config." >&2
   exit 1
 fi
-# Relative paths are now relative to the Compose directory, as in the bind mount.
 mkdir -p -- "${SDFT_HOST_DIR}"
-chown -R 1000:1000 -- "${SDFT_HOST_DIR}"
+# Resolve a symlinked host directory (e.g. onto an attached volume) so chown
+# recurses into its target. Plain -R must stay: -H would also chown the
+# targets of symlinks the rstudio user creates inside the directory.
+chown -R 1000:1000 -- "$(realpath -- "${SDFT_HOST_DIR}")"
 
 if [[ "${COMPOSE_UP}" != "1" ]]; then
   echo "COMPOSE_UP=${COMPOSE_UP}: skipping docker compose up."

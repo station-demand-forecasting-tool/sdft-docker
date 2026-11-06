@@ -5,7 +5,3 @@ test-compose_pr.yml
 sdft-docker.Rproj
 README.md.pdf
 .env
-
-# Added by hindsight-cursor plugin — session rules are regenerated each session.
-/.cursor/rules/hindsight-session.mdc
-
